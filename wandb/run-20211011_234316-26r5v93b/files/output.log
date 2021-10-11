@@ -1,0 +1,88 @@
+
+Validation sanity check:   0%|                                                                        | 0/2 [00:00<?, ?it/s]
+  | Name    | Type    | Params
+------------------------------------
+0 | model   | Modelxy | 11.5 M
+1 | sigmoid | Sigmoid | 0
+------------------------------------
+11.5 M    Trainable params
+0         Non-trainable params
+11.5 M    Total params
+45.841    Total estimated model params size (MB)
+/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/trainer/data_loading.py:106: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 56 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+
+  f"The dataloader, {name}, does not have many workers which may be a bottleneck."
+Global seed set to 42
+Epoch 0:   0%|                                                                           | 0/1574 [00:00<00:00, 2772.18it/s]
+/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/trainer/data_loading.py:106: UserWarning: The dataloader, train dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 56 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Epoch 0:   8%|████▏                                              | 130/1574 [02:15<24:52,  1.03s/it, loss=0.106, v_num=v93b]
+/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py:1047: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...
+
+Epoch 0:   8%|████▎                                              | 132/1574 [02:17<24:50,  1.03s/it, loss=0.106, v_num=v93b]

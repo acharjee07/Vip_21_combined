@@ -6,7 +6,7 @@ import timm
 
 class Modelx(nn.Module):
     
-    def __init__(self, model_name, pretrained=True):
+    def __init__(self, model_name, pretrained=None):
         
         super().__init__()
         self.model = timm.create_model(model_name, pretrained=pretrained)
@@ -176,7 +176,9 @@ class Modelxy(nn.Module):
         self.epoch = checkpoint['epoch']
         self.loss = checkpoint['loss']
         
-
-model_name='efficientnet_b0'
+print('done here effnet.py')
+model_name='efficientnet_b1'
+print('done again')
 mxy = Modelxy(model_name)
+print('done again2')
 print(mxy(torch.zeros(1, 3, 288, 288)).shape)

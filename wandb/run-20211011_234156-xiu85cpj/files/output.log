@@ -1,0 +1,57 @@
+
+Validation sanity check:   0%|                                                                        | 0/2 [00:00<?, ?it/s]
+  | Name    | Type    | Params
+------------------------------------
+0 | model   | Modelxy | 11.5 M
+1 | sigmoid | Sigmoid | 0
+------------------------------------
+11.5 M    Trainable params
+0         Non-trainable params
+11.5 M    Total params
+45.841    Total estimated model params size (MB)
+/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/trainer/data_loading.py:106: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 56 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  f"The dataloader, {name}, does not have many workers which may be a bottleneck."
+/home/gpueee/data/VIP21/Vip_21_combined/train_utils_lit/train_utils.py:93: UserWarning: Using a target size (torch.Size([16, 1, 9216])) that is different to the input size (torch.Size([16, 1, 10816])). This will likely lead to incorrect results due to broadcasting. Please ensure they have the same size.
+  loss += 0.5 * mse_loss(heatmap_pred, heatmap_gt, reduction='mean')
+Traceback (most recent call last):
+  File "train.py", line 88, in <module>
+    trainer.fit(lit_model)
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 553, in fit
+    self._run(model)
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 918, in _run
+    self._dispatch()
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 986, in _dispatch
+    self.accelerator.start_training(self)
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/accelerators/accelerator.py", line 92, in start_training
+    self.training_type_plugin.start_training(trainer)
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/plugins/training_type/training_type_plugin.py", line 161, in start_training
+    self._results = trainer.run_stage()
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 996, in run_stage
+    return self._run_train()
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1031, in _run_train
+    self._run_sanity_check(self.lightning_module)
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1115, in _run_sanity_check
+    self._evaluation_loop.run()
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 111, in run
+    self.advance(*args, **kwargs)
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/loops/dataloader/evaluation_loop.py", line 111, in advance
+    dataloader_iter, self.current_dataloader_idx, dl_max_batches, self.num_dataloaders
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 111, in run
+    self.advance(*args, **kwargs)
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 110, in advance
+    output = self.evaluation_step(batch, batch_idx, dataloader_idx)
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 154, in evaluation_step
+    output = self.trainer.accelerator.validation_step(step_kwargs)
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/accelerators/accelerator.py", line 211, in validation_step
+    return self.training_type_plugin.validation_step(*step_kwargs.values())
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/pytorch_lightning/plugins/training_type/training_type_plugin.py", line 178, in validation_step
+    return self.model.validation_step(*args, **kwargs)
+  File "/home/gpueee/data/VIP21/Vip_21_combined/train_utils_lit/train_utils.py", line 321, in validation_step
+    loss = joints_mse_loss(output, target)
+  File "/home/gpueee/data/VIP21/Vip_21_combined/train_utils_lit/train_utils.py", line 93, in joints_mse_loss
+    loss += 0.5 * mse_loss(heatmap_pred, heatmap_gt, reduction='mean')
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/torch/nn/functional.py", line 3089, in mse_loss
+    expanded_input, expanded_target = torch.broadcast_tensors(input, target)
+  File "/home/gpueee/anaconda3/envs/vipcup_2021/lib/python3.7/site-packages/torch/functional.py", line 73, in broadcast_tensors
+    return _VF.broadcast_tensors(tensors)  # type: ignore[attr-defined]
+RuntimeError: The size of tensor a (10816) must match the size of tensor b (9216) at non-singleton dimension 2
