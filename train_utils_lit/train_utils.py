@@ -260,14 +260,17 @@ class LitPose(pl.LightningModule):
         loss = joints_mse_loss(output, target)
         score,_=calcAllPCKhBatch(get_preds(target.cpu()),get_preds(output.detach().cpu()),th=.5)
         
-        X=np.arange(0,.5,.1)
-        Y=[]
-        for x in X :
-            y,_=calcAllPCKhBatch(get_preds(target.cpu()),get_preds(output.detach().cpu()),th=x)
-            Y.append(y)
+        # X=np.arange(0,.5,.1)
+        # Y=[]
+        # for x in X :
+        #     y,_=calcAllPCKhBatch(get_preds(target.cpu()),get_preds(output.detach().cpu()),th=x)
+        #     Y.append(y)
             
-        sauc=auc(X,Y)
-        logs={'train_loss':loss, 'train_acc':score*100,'train_auc':sauc ,'lr':self.optimizer.param_groups[0]['lr']}
+        # sauc=auc(X,Y)
+
+        target=get_preds(target.cpu())
+        output=get_preds(output.detach().cpu())
+        logs={'train_loss':loss, 'train_acc':score*100,'lr':self.optimizer.param_groups[0]['lr']}
         self.log_dict(
             logs,
             on_step=False, on_epoch=True, prog_bar=True, logger=True
@@ -275,24 +278,63 @@ class LitPose(pl.LightningModule):
 
         )
         return loss
+
+
+    def training_epoch_end(self,training_step_outputs):
+        
+        targets=training_step_outputs[0][1]
+        outputs=training_step_outputs[1][1]
+        X=np.arange(0,.5,.01)
+        Y=[]
+        for x in X :
+            y,_=calcAllPCKhBatch(targets,outputs,th=x)
+            Y.append(y)
+
+        sauc=auc(X,Y)
+        self.log_dict({'train_auc':sauc})
+
+
     
     def validation_step(self, batch, batch_idx):
         image = batch[0]
         target = batch[1]
         output = self.model(image)
         loss = joints_mse_loss(output, target)
-        score,_=calcAllPCKhBatch(get_preds(target.cpu()),get_preds(output.detach().cpu()),th=.5)
-        X=np.arange(0,.5,.1)
-        Y=[]
-        for x in X :
-            y,_=calcAllPCKhBatch(get_preds(target.cpu()),get_preds(output.detach().cpu()),th=x)
-            Y.append(y)
-            
-        sauc=auc(X,Y)
-        logs={'valid_loss':loss, 'valid_acc':score*100,'valid_auc':sauc }
+        score,_=calcAllPCKhBatch(get_preds(target.cpu()),get_preds(output.detach().cpu()),th=.5)    
+        
+        logs={'valid_loss':loss, 'valid_acc':score*100 }
         self.log_dict(
             logs,
             on_step=False, on_epoch=True, prog_bar=True, logger=True
             
         )
-        return loss
+        target=get_preds(target.cpu())
+        output=get_preds(output.detach().cpu())
+        return loss ,target,output
+
+    def validation_epoch_end(self,validtion_step_outputs):
+        
+        targets=validtion_step_outputs[0][1]
+        outputs=validtion_step_outputs[1][1]
+        X=np.arange(0,.5,.01)
+        Y=[]
+        for x in X :
+            y,_=calcAllPCKhBatch(targets,outputs,th=x)
+            Y.append(y)
+
+        sauc=auc(X,Y)
+        self.log_dict({'valid_auc':sauc})
+        # print(targets)
+        # print('again')
+        # print(outputs)
+        # X=np.arange(0,.5,.1)
+        # Y=[]
+        # for x in X :
+        #     y,_=calcAllPCKhBatch(get_preds(target.cpu()),get_preds(output.detach().cpu()),th=x)
+        #     Y.append(y)
+
+        # sauc=auc(X,Y)
+        # self.log_dict({'valid_auc':sauc})
+
+
+
