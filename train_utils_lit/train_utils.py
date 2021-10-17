@@ -9,6 +9,7 @@ from tqdm import tqdm
 import torch.nn as nn
 import numpy as np
 import math
+import torchvision.transforms as transforms
 from lib.utils import HeatmapProcessor, heatmap2keypts, heatmap2keyptsBatch
 from lib.utils import calcAllPCKhBatch
 import random
@@ -117,13 +118,15 @@ class JointsMSELoss(nn.Module):
 from torch.utils.data import DataLoader,ConcatDataset
 import pytorch_lightning as pl
 from lib.utils import SLPdataset
+from lib.utils import MPIIDataset
 from lib.dataset import SLPDatasetJointToLabels, SLPDatasetLeftRightJointPairs, loadImagePathsAndLabels
 import sklearn 
 from sklearn.metrics import auc
+
 import os
 os.path.join('.','data', 'train','train', '*')
-trainImgPaths, trainKeyPts = loadImagePathsAndLabels(os.path.join('.','data', 'slp','train','train'), onlyAnnotated=False)
-validImgPaths, validKeyPts = loadImagePathsAndLabels(os.path.join('.','data', 'slp','valid','valid'), onlyAnnotated=True)
+trainImgPaths, trainKeyPts = loadImagePathsAndLabels(os.path.join('.','/home/gpueee/data/VIP21/data', 'train','train'), onlyAnnotated=False)
+validImgPaths, validKeyPts = loadImagePathsAndLabels(os.path.join('.','/home/gpueee/data/VIP21/data', 'valid','valid'), onlyAnnotated=True)
 annotatedImgPaths=trainImgPaths[0:1350]
 unannotatedImgPaths=trainImgPaths[1350:]
 
@@ -164,7 +167,26 @@ class LitPose(pl.LightningModule):
 
 
     def train_dataloader(self):
-        if self.phase==1:
+        if self.phase==0:
+            
+            img_root = '/home/gpueee/data/VIP21/simple_baseline/human-pose-estimation.pytorch/data/mpii/images/'
+            anno_path = '/home/gpueee/data/VIP21/simple_baseline/human-pose-estimation.pytorch/data/mpii/annot/train.json'
+            img_size = self.data_config['input_size'][1:]
+            hm_size = (self.data_config['hm_size'][0],self.data_config['hm_size'][1])
+            transform= transforms.Compose([ transforms.ToTensor(),
+                                            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                                std=[0.229, 0.224, 0.225])
+                                            ])
+            is_train = True
+            trainDataset = MPIIDataset(img_root, anno_path, img_size, 
+                                       hm_size, is_train, transform=transform)
+
+
+
+
+
+
+        elif self.phase==1:
             trainDataset = SLPdataset(self.data_config,
                          annotatedImgPaths,
                          trainKeyPts,
@@ -238,14 +260,30 @@ class LitPose(pl.LightningModule):
         
         
              
-        train_loader = DataLoader(trainDataset, batch_size=1, shuffle=True, pin_memory=True, drop_last=True, num_workers=2)
+        train_loader = DataLoader(trainDataset, batch_size=self.data_config['batch_size'], shuffle=True, pin_memory=True, drop_last=True, num_workers=2)
         return train_loader
     
     def val_dataloader(self):
-        validDataset = SLPdataset(self.data_config,validImgPaths, validKeyPts,
-                           outputHeatmap=True,  heatmapRes=(self.data_config['hm_size'][0],self.data_config['hm_size'][1]),
-                           normalizeImg=True, normalizeKeyPts=True, shuffle=False,probAttu=0,resize=True)      
-        valid_loader = DataLoader(validDataset, batch_size=1, shuffle=False, pin_memory=False, drop_last=True, num_workers=2)
+
+        if self.phase==0:
+            
+            img_root = '/home/gpueee/data/VIP21/simple_baseline/human-pose-estimation.pytorch/data/mpii/images/'
+            anno_path = '/home/gpueee/data/VIP21/simple_baseline/human-pose-estimation.pytorch/data/mpii/annot/valid.json'
+            img_size = self.data_config['input_size'][1:]
+            hm_size = (self.data_config['hm_size'][0],self.data_config['hm_size'][1])
+            transform= transforms.Compose([ transforms.ToTensor(),
+                                            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                                std=[0.229, 0.224, 0.225])
+                                            ])
+            is_train = True
+            validDataset = MPIIDataset(img_root, anno_path, img_size, 
+                                       hm_size, is_train, transform=transform)
+        else:
+
+            validDataset = SLPdataset(self.data_config,validImgPaths, validKeyPts,
+                            outputHeatmap=True,  heatmapRes=(self.data_config['hm_size'][0],self.data_config['hm_size'][1]),
+                            normalizeImg=True, normalizeKeyPts=True, shuffle=False,probAttu=0,resize=True)      
+        valid_loader = DataLoader(validDataset, batch_size=self.data_config['batch_size'], shuffle=False, pin_memory=False, drop_last=True, num_workers=2)
         return valid_loader
     
  

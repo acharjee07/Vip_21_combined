@@ -13,7 +13,9 @@ from timm.data.transforms_factory import create_transform
 from models import mxy
 from train_utils_lit import LitPose
 
-
+import wandb
+wandb.login(key='b19924dbbd8814abfc6253cb43cb4f741cdd4f98')  ##logging in sanjay
+from pytorch_lightning.loggers import WandbLogger
 
 
 class Config:
@@ -36,12 +38,13 @@ seed_everything(Config.seed)
 
 
 data_config={
-'input_size': (3, 440, 440),
+'input_size': (3, 388, 388),
  'interpolation': 'bicubic',
  'mean': (0.485, 0.456, 0.406),
  'std': (0.229, 0.224, 0.225),
  'crop_pct': 1.0,
- 'hm_size':(112,112)
+ 'hm_size':(104,104),
+ 'batch_size':24
 
  }
 
@@ -55,8 +58,9 @@ lit_model = LitPose(
     plConfig=Config,
     data_config=data_config,
     model=model,
-    phase=1
+    phase=0
     )
+logger= WandbLogger(name='',project='Mpii training')  
 
 checkpoint_callback=ModelCheckpoint(monitor='valid_auc',
                                    save_top_k=1,
@@ -65,7 +69,7 @@ checkpoint_callback=ModelCheckpoint(monitor='valid_auc',
                                    filename='{epoch:02d}-{valid_auc:.4f}-{valid_acc:.4f}-{train_loss:.4f}-{train_acc:.4f}',
                                     verbose=False,
                                     mode='max',
-                                    dirpath='./'
+                                    dirpath='./Saved_weights/Mpii_pretrained'
                                    )
 
 
@@ -75,7 +79,7 @@ trainer = Trainer(auto_lr_find=Config.lr,
     max_epochs=Config.n_epoch,
     gpus=[0],
     callbacks=checkpoint_callback,
-
+    logger=logger,
 
     weights_summary='top',
     amp_backend='native'

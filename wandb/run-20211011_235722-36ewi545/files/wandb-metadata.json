@@ -1,0 +1,24 @@
+{
+    "os": "Linux-5.4.0-70-generic-x86_64-with-debian-bullseye-sid",
+    "python": "3.7.9",
+    "heartbeatAt": "2021-10-11T17:57:24.482620",
+    "startedAt": "2021-10-11T17:57:22.611310",
+    "docker": null,
+    "gpu": "Tesla K40m",
+    "gpu_count": 1,
+    "cpu_count": 56,
+    "cuda": "10.1.105",
+    "args": [],
+    "state": "running",
+    "program": "train.py",
+    "codePath": "train.py",
+    "git": {
+        "remote": "https://github.com/Sanjay03079/Vip_21_combined.git",
+        "commit": "9088c1d618d1046dc3a5f5e3920ddb48635dc646"
+    },
+    "email": "shahruk10@gmail.com",
+    "root": "/home/gpueee/data/VIP21/Vip_21_combined",
+    "host": "gpu-UCSC-C240-M4SX",
+    "username": "gpueee",
+    "executable": "/home/gpueee/anaconda3/envs/vipcup_2021/bin/python"
+}
