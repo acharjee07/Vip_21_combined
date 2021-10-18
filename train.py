@@ -14,8 +14,8 @@ from models import mxy
 from train_utils_lit import LitPose
 
 import wandb
-wandb.login(key='b19924dbbd8814abfc6253cb43cb4f741cdd4f98')  ##logging in sanjay
-from pytorch_lightning.loggers import WandbLogger
+# wandb.login(key='b19924dbbd8814abfc6253cb43cb4f741cdd4f98')  ##logging in sanjay
+# from pytorch_lightning.loggers import WandbLogger
 
 
 class Config:
@@ -44,9 +44,9 @@ data_config={
  'std': (0.229, 0.224, 0.225),
  'crop_pct': 1.0,
  'hm_size':(104,104),
- 'batch_size':24,
- 'slp_train_path':'',
- 'slp_valid_path':'',
+ 'batch_size':1,
+ 'slp_train_path':'data/slp/train/train/',
+ 'slp_valid_path':'data/slp/valid/valid/',
  'mpii_images':'',
  'mpii_train_json':'',
  'mpii_valid_json': '',
@@ -66,7 +66,7 @@ lit_model = LitPose(
     model=model,
     phase=1
     )
-logger= WandbLogger(name='',project='Mpii training')  
+# logger= WandbLogger(name='',project='Mpii training')  
 
 checkpoint_callback=ModelCheckpoint(monitor='valid_auc',
                                    save_top_k=1,
@@ -85,7 +85,7 @@ trainer = Trainer(auto_lr_find=Config.lr,
     max_epochs=Config.n_epoch,
     gpus=[0],
     callbacks=checkpoint_callback,
-    logger=logger,
+    # logger=logger,
 
     weights_summary='top',
     amp_backend='native'

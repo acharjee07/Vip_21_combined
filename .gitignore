@@ -1,1 +1,3 @@
 data/
+wandb/
+lightning_logs/

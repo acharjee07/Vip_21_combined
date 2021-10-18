@@ -3,8 +3,10 @@ from numpy.lib.stride_tricks import as_strided
 import numpy as np
 import random
 import cv2
+import os
 
-
+current_dir=os.getcwd()
+further_dir='{}/lib/cover_augmentations/aug_data'.format(current_dir)
 def save_list(sample_list,name):
     
     file_name = name
@@ -61,7 +63,7 @@ def getFold(att):
     for i in range(Num_mask):
         k=random.randint(1,120)
         # print(np.str(k))
-        ff=cv2.imread('lib/cover_augmentations/aug_data/Fold/'+np.str(k)+'.jpg',0)
+        ff=cv2.imread('{}/Fold/'.format(further_dir)+np.str(k)+'.jpg',0)
         # ff=cv2.imread('lib/data/Fold/1.jpg')
         
         maskT=(ff<255)*1
@@ -103,16 +105,16 @@ def getCovered(image,attenuation):
 
     return newImage
 
+# further_dir='{}/lib/cover_augmentation/aug_data'.format(current_dir)
 
+maxIR1=load_list('{}/maxIR1'.format(further_dir))
+attenuation1=load_list('{}/attenuation1'.format(further_dir))
 
-maxIR1=load_list('lib/cover_augmentations/aug_data/maxIR1')
-attenuation1=load_list('lib/cover_augmentations/aug_data/attenuation1')
+maxIR2=load_list('{}/maxIR2'.format(further_dir))
+attenuation2=load_list('{}/attenuation2'.format(further_dir))
 
-maxIR2=load_list('lib/cover_augmentations/aug_data/maxIR2')
-attenuation2=load_list('lib/cover_augmentations/aug_data/attenuation2')
-
-maxIR3=load_list('lib/cover_augmentations/aug_data/maxIR3')
-attenuation3=load_list('lib/cover_augmentations/aug_data/attenuation3')
+maxIR3=load_list('{}/maxIR3'.format(further_dir))
+attenuation3=load_list('{}/attenuation3'.format(further_dir))
 
 
 

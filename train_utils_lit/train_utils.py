@@ -13,7 +13,7 @@ import torchvision.transforms as transforms
 from lib.utils import HeatmapProcessor, heatmap2keypts, heatmap2keyptsBatch
 from lib.utils import calcAllPCKhBatch
 import random
-
+current_dir=os.getcwd()
 
 
 import pickle
@@ -124,11 +124,11 @@ import sklearn
 from sklearn.metrics import auc
 
 import os
-os.path.join('.','data', 'train','train', '*')
-trainImgPaths, trainKeyPts = loadImagePathsAndLabels(os.path.join('.','/home/gpueee/data/VIP21/data', 'train','train'), onlyAnnotated=False)
-validImgPaths, validKeyPts = loadImagePathsAndLabels(os.path.join('.','/home/gpueee/data/VIP21/data', 'valid','valid'), onlyAnnotated=True)
-annotatedImgPaths=trainImgPaths[0:1350]
-unannotatedImgPaths=trainImgPaths[1350:]
+# os.path.join('.','data', 'train','train', '*')
+# validImgPaths, validKeyPts = loadImagePathsAndLabels(os.path.join('.','current_dir','data', 'valid','valid'), onlyAnnotated=True)
+# trainImgPaths, trainKeyPts = loadImagePathsAndLabels(os.path.join('.','current_dir','data', 'train','train'), onlyAnnotated=False)
+# annotatedImgPaths=trainImgPaths[0:1350]
+# unannotatedImgPaths=trainImgPaths[1350:]
 
 
 
@@ -140,9 +140,16 @@ class LitPose(pl.LightningModule):
         self.sigmoid = nn.Sigmoid()
         self.lr = self.plConfig.lr
         self.data_config=data_config
+
+        self.validImgPaths, self.validKeyPts = loadImagePathsAndLabels(self.data_config['slp_valid_path'], onlyAnnotated=True)
+        self.trainImgPaths, self.trainKeyPts = loadImagePathsAndLabels(self.data_config['slp_train_path'], onlyAnnotated=False)
+        print('dfdlfkjlskjdfljaldjflakjdfajoijlj')
+        print(len(self.trainImgPaths))
+        self.annotatedImgPaths=self.trainImgPaths[0:1350]
+        self.unannotatedImgPaths=self.trainImgPaths[1350:]
         self.phase=phase
         if self.phase==2:
-            self.predictions=load_obj('results/prediciton_unannotated.pkl')
+            self.predictions=load_obj(self.data_config['unannotated_prediciotns'])
             self.selected_path=list(self.predictions.keys())
            
             
@@ -169,8 +176,8 @@ class LitPose(pl.LightningModule):
     def train_dataloader(self):
         if self.phase==0:
             
-            img_root = '/home/gpueee/data/VIP21/simple_baseline/human-pose-estimation.pytorch/data/mpii/images/'
-            anno_path = '/home/gpueee/data/VIP21/simple_baseline/human-pose-estimation.pytorch/data/mpii/annot/train.json'
+            img_root = self.data_config['mpii_images']
+            anno_path = self.data_config['mpii_train_json']
             img_size = self.data_config['input_size'][1:]
             hm_size = (self.data_config['hm_size'][0],self.data_config['hm_size'][1])
             transform= transforms.Compose([ transforms.ToTensor(),
@@ -188,8 +195,8 @@ class LitPose(pl.LightningModule):
 
         elif self.phase==1:
             trainDataset = SLPdataset(self.data_config,
-                         annotatedImgPaths,
-                         trainKeyPts,
+                         self.annotatedImgPaths,
+                         self.trainKeyPts,
                          outputHeatmap=True,
                         heatmapRes=(self.data_config['hm_size'][0],self.data_config['hm_size'][1]),
                         
@@ -215,8 +222,8 @@ class LitPose(pl.LightningModule):
             
 
             trainDataset1=SLPdataset(self.data_config,
-                         annotatedImgPaths,
-                         trainKeyPts,
+                         self.annotatedImgPaths,
+                         self.trainKeyPts,
                          outputHeatmap=True,
                          heatmapRes=(self.data_config['hm_size'][0],self.data_config['hm_size'][1]),
                         
@@ -267,8 +274,8 @@ class LitPose(pl.LightningModule):
 
         if self.phase==0:
             
-            img_root = '/home/gpueee/data/VIP21/simple_baseline/human-pose-estimation.pytorch/data/mpii/images/'
-            anno_path = '/home/gpueee/data/VIP21/simple_baseline/human-pose-estimation.pytorch/data/mpii/annot/valid.json'
+            img_root = self.data_config['mpii_images']
+            anno_path = self.data_config['mpii_valid_json']
             img_size = self.data_config['input_size'][1:]
             hm_size = (self.data_config['hm_size'][0],self.data_config['hm_size'][1])
             transform= transforms.Compose([ transforms.ToTensor(),
@@ -280,7 +287,7 @@ class LitPose(pl.LightningModule):
                                        hm_size, is_train, transform=transform)
         else:
 
-            validDataset = SLPdataset(self.data_config,validImgPaths, validKeyPts,
+            validDataset = SLPdataset(self.data_config,self.validImgPaths, self.validKeyPts,
                             outputHeatmap=True,  heatmapRes=(self.data_config['hm_size'][0],self.data_config['hm_size'][1]),
                             normalizeImg=True, normalizeKeyPts=True, shuffle=False,probAttu=0,resize=True)      
         valid_loader = DataLoader(validDataset, batch_size=self.data_config['batch_size'], shuffle=False, pin_memory=False, drop_last=True, num_workers=2)

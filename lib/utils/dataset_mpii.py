@@ -6,6 +6,10 @@
 # import logging
 # import random
 import os
+
+
+current_dir=os.getcwd()
+
 import cv2
 import copy
 import json
@@ -348,14 +352,15 @@ def get_3rd_point(a, b):
     return b + np.array([-direct[1], direct[0]], dtype=np.float32)
 
 
-if __name__ == "__main__":
-    img_root = '/home/gpueee/data/VIP21/simple_baseline/human-pose-estimation.pytorch/data/mpii/images/'
-    anno_path = '/home/gpueee/data/VIP21/simple_baseline/human-pose-estimation.pytorch/data/mpii/annot/trainval.json'
-    img_size = (256, 256)
-    hm_size = (112, 112)
-    is_train = True
-    mpii = MPIIDataset(img_root, anno_path, img_size, hm_size, is_train, transform=None)
-    i, t, tw, m = mpii.__getitem__(20)
-    print(i.shape)
-    print(t.shape)
-    print(len(mpii))
+# if __name__ == "__main__":
+    
+#     img_root = '/home/gpueee/data/VIP21/simple_baseline/human-pose-estimation.pytorch/data/mpii/images/'
+#     anno_path = '/home/gpueee/data/VIP21/simple_baseline/human-pose-estimation.pytorch/data/mpii/annot/trainval.json'
+#     img_size = (256, 256)
+#     hm_size = (112, 112)
+#     is_train = True
+#     mpii = MPIIDataset(img_root, anno_path, img_size, hm_size, is_train, transform=None)
+#     i, t, tw, m = mpii.__getitem__(20)
+#     print(i.shape)
+#     print(t.shape)
+#     print(len(mpii))
