@@ -61,7 +61,7 @@ def get_preds(scores):
 
 
 
-def get_loader(path,config,loader_type='slp',flip=True,):
+def get_loader(path,config,loader_type='slp',flip=True,batch__size=1):
     ''' get  loaders for specific inference
     returns a dataloader onject'''
 
@@ -87,7 +87,7 @@ def get_loader(path,config,loader_type='slp',flip=True,):
                                    outputHeatmap=True, heatmapRes=heatmapRes,
                                    normalizeImg=True, normalizeKeyPts=True, shuffle=False,probFlipH=0,probAttu=0,resize=True)
         img_paths=unannotatedImgPaths
-        loader=DataLoader(Dataset, batch_size=1, shuffle=False, pin_memory=False, drop_last=True, num_workers=0)
+        loader=DataLoader(Dataset, batch_size=batch__size, shuffle=False, pin_memory=False, drop_last=True, num_workers=0)
         
     else:
         if flip:
@@ -99,7 +99,7 @@ def get_loader(path,config,loader_type='slp',flip=True,):
                                        outputHeatmap=True, heatmapRes=heatmapRes,
                                        normalizeImg=True, normalizeKeyPts=True, shuffle=False,probAttu=0,resize=True,probFlipH=0)
         img_paths=validImgPaths
-        loader=DataLoader(Dataset, batch_size=1, shuffle=False, pin_memory=False, drop_last=True, num_workers=3)
+        loader=DataLoader(Dataset, batch_size=batch__size, shuffle=False, pin_memory=False, drop_last=True, num_workers=3)
         
     return img_paths,loader
 

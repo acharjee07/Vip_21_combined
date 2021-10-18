@@ -59,12 +59,15 @@ _,flipped_loader_test = get_loader(
                                                 path=valid_path,
                                                 config=data_config,
                                                 loader_type='valid',
-                                                flip=True)
+                                                flip=True,
+                                                batch__size=5
+                                                )
 _, notflipped_loader_test=get_loader(
                                     path=valid_path,
                                     config=data_config,
                                     loader_type='valid',
-                                    flip=False
+                                    flip=False,
+                                    batch__size=5
                                     )
 checkpoint='epoch=00-valid_auc=0.3336-valid_acc=6.6984-train_loss=0.1035-train_acc=4.5503.ckpt'
 result=get_results(
