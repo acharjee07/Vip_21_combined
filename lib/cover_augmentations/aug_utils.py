@@ -6,7 +6,8 @@ import cv2
 import os
 
 current_dir=os.getcwd()
-further_dir='{}/lib/cover_augmentations/aug_data'.format(current_dir)
+# further_dir='{}/lib/cover_augmentations/aug_data'.format(current_dir)
+further_dir='../input/combined-vip-repo/Vip_21_combined-main/lib/cover_augmentations/aug_data'
 def save_list(sample_list,name):
     
     file_name = name
