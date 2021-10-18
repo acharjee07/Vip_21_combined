@@ -44,7 +44,13 @@ data_config={
  'std': (0.229, 0.224, 0.225),
  'crop_pct': 1.0,
  'hm_size':(104,104),
- 'batch_size':24
+ 'batch_size':24,
+ 'slp_train_path':'',
+ 'slp_valid_path':'',
+ 'mpii_images':'',
+ 'mpii_train_json':'',
+ 'mpii_valid_json': '',
+ 'unannotated_predictions':''
 
  }
 
@@ -58,7 +64,7 @@ lit_model = LitPose(
     plConfig=Config,
     data_config=data_config,
     model=model,
-    phase=0
+    phase=1
     )
 logger= WandbLogger(name='',project='Mpii training')  
 
