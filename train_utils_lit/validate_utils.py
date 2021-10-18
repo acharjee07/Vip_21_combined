@@ -62,9 +62,9 @@ def get_preds(scores):
 
 
 def get_loader(path,config,loader_type='slp',flip=True,):
+    ''' get  loaders for specific inference
+    returns a dataloader onject'''
 
-    # train_path='./data/train/train/'
-    # test_path='./data/test1/'
     if loader_type=='slp' :
         
         trainImgPathsall, trainKeyPts = loadImagePathsAndLabels(path, onlyAnnotated=False)
@@ -105,24 +105,6 @@ def get_loader(path,config,loader_type='slp',flip=True,):
 
 
 
-
-
-
-transform = transforms.Compose([transforms.RandomHorizontalFlip(p=1)])
-def get_combined_pred(batchn,batchf,model):
-    img=batchn[0]
-    gt=batchn[1]
-    img_original=batchn[3]
-#     print(img.shape,gt.shape)
-    pred=model(img.cuda()).detach().cpu()
-    ##preds with flipped data given flipped keypoints 
-    fim=batchf[0]
-    fgt=batchf[1]
-    predsflipped=model(fim.cuda()).detach().cpu()
-    predsfixed=flip_hm(predsflipped)
-    avg_pred=(predsfixed+pred)/2
-    
-    return [pred,predsfixed] ,avg_pred,img_original,gt
 def flip_img(img):
     
     transform = transforms.Compose([transforms.RandomHorizontalFlip(p=1)])
@@ -141,6 +123,27 @@ def flip_hm(hm):
         
 
     return hm1
+
+transform = transforms.Compose([transforms.RandomHorizontalFlip(p=1)])
+
+
+def get_combined_pred(batchn,batchf,model):
+    img=batchn[0]
+    gt=batchn[1]
+    img_original=batchn[3]
+#     print(img.shape,gt.shape)
+    pred=model(img.cuda()).detach().cpu()
+    ##preds with flipped data given flipped keypoints 
+    fim=batchf[0]
+    fgt=batchf[1]
+    predsflipped=model(fim.cuda()).detach().cpu()
+    predsfixed=flip_hm(predsflipped)
+    avg_pred=(predsfixed+pred)/2
+    
+    return [pred,predsfixed] ,avg_pred,img_original,gt
+
+
+
 def visual(image,annotation):
    
     '''visualize images with stick figures 
@@ -191,7 +194,7 @@ def get_combined_pred_unannotated(batchn,batchf,model):
     return [pred,predsfixed] ,avg_pred,img_original
 
 
-x=0
+
 def show_predicitons(idx,preds,gt,imgs):
     preds_heatmaps,preds_cordinates=preds
     gt_heatmaps,gt_cordinates=gt
@@ -218,7 +221,10 @@ def show_predicitons(idx,preds,gt,imgs):
     hmg=gt_heatmaps[x].permute(1,2,0).numpy()
     hmg=np.squeeze(np.max(hmg, axis=-1))
     plt.imshow(hmg)
-    
+
+
+
+
 def get_pck_single(gt,pred,th):
     head_size=np.linalg.norm(gt[12]-gt[13])
     distances=np.linalg.norm(gt-pred,axis=1)
@@ -271,5 +277,5 @@ def get_results(model,checkpoint,prediction_type,
                 imgs,
                 df,preds_heatmaps]
     else:
-        unannotatedImgPaths=loadImagePathsAndLabels(os.path.join('.','data', 'slp','test'), onlyAnnotated=False)[0]
-        return [preds_cordinates,imgs,unannotatedImgPaths,preds_heatmaps]
+
+        return [preds_cordinates,imgs,preds_heatmaps]

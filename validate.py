@@ -67,7 +67,7 @@ _, notflipped_loader_test=get_loader(
                                     flip=False
                                     )
 checkpoint='epoch=00-valid_auc=0.3336-valid_acc=6.6984-train_loss=0.1035-train_acc=4.5503.ckpt'
-result_test1=get_results(
+result=get_results(
                         model=lit_model,
                         checkpoint=checkpoint,
                         prediction_type='valid',
